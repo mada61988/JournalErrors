@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Document</title>
+</head>
+<body>
+    <div class="container mt-4">
+
+		<div class="row justify-content-center	">
+			<div class="col-8">
+
+
+				<div class="card">
+
+					<div class="card-body">
+						<textarea placeholder="Enter Journal data here..." class="form-control" id="journal" rows="6"
+							label="TESTT"></textarea>
+
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-3">
+
+
+							<!-- <button type="button" onclick="callJournalData()" class="btn btn-primary ">Analyse</button> -->
+                            <button type="button" onclick="getErrors()" class="btn btn-primary ">Analyse</button>
+
+                        </div>
+					</div>
+				</div>
+				<!-- 
+			<label for="exampleFormControlTextarea1" class="form-label">Enter Journal Data here...</label>
+			<textarea class="form-control" id="journal" rows="6" label="TESTT"></textarea> -->
+				<!-- <label for="exampleFormControlInput1" class="form-label">Email address</label>
+			<input type="email" rows="6" class="form-control" id="journal" placeholder="name@example.com">
+		  -->
+
+			</div>
+		</div>
+
+
+	</div>
+<!-- <textarea id="journal" ></textarea>
+
+<button onClick="callJournalData()">Click Me</button>
+ -->
+ <div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                
+                <th>Error</th>
+               
+            </tr>
+        </thead>
+        <tbody data-bind="foreach:errorsArray">
+            <tr> 
+                <td data-bind="text:ID"></td>
+            
+                <td data-bind="text:Error"></td>
+                <!-- <td data-bind="text:WalletNumber"></td>
+                <td data-bind="text:Type1"></td>
+                <td data-bind="text:Type2"></td>
+                <td data-bind="text:Type3"></td>
+                <td data-bind="text:Type4"></td>
+                <td data-bind="text:Type5"></td>
+                <td data-bind="text:Type6"></td> -->
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+    <script>
+
+
+
+
+function getErrors(){
+    var JournalData = document.getElementById('journal').value;
+    var containsErrors=true; 
+   var lastErrorIndex=0
+    i=0
+    arr=[]
+    obj={}
+    if(JournalData.includes("ERROR",0)){
+    
+    while(containsErrors){
+errorIndex=JournalData.indexOf("ERROR",lastErrorIndex);
+//var time= JournalData.slice(JournalData.indexOf("\n",errorIndex-50),JournalData.indexOf("\n",errorIndex-50)+9);
+errorString=JournalData.slice(JournalData.indexOf("\n",errorIndex-30),JournalData.indexOf("\n",JournalData.indexOf("\n",errorIndex-30)+1));
+console.log(errorString)
+obj={
+    Time:"",
+    ID:i,
+    Error:errorString
+}
+arr.push(obj)
+var v=JournalData.includes("ERROR",errorIndex+10);
+if(JournalData.includes("ERROR",errorIndex+10)){
+   
+    containsErrors=true;
+}
+else{
+    containsErrors=false;
+}
+lastErrorIndex=errorIndex+20
+i++
+    }
+
+}
+
+
+
+
+
+
+
+else{
+alert("JOurnal doesn't contain any errors, be happy");
+}
+var viewModel = function () {
+        this.errorsArray = ko.observableArray(arr);
+    }
+    ko.applyBindings(viewModel);
+    console.log("Transaction Array",errorsArray);
+
+}
+
+
+
+
+
+
+
+function callJournalData(){
+
+    var JournalData = document.getElementById('journal').value;
+    var LastTransactionStartIndex = 0;
+    var TransactionStartIndex = JournalData.indexOf("TRANSACTION START", LastTransactionStartIndex)
+    var Date = JournalData.slice(TransactionStartIndex + 14, TransactionStartIndex + 26);
+    var TransactionEndIndex = JournalData.indexOf("TRANSACTION END", TransactionStartIndex)
+    var Transactions = [];
+    var Track2DataIndex = 0
+    var i = TransactionStartIndex
+    var ContainsTransactionStarts = true;
+    var LastTransactionEndIndex = 0
+z=0
+array=[];
+obj={};
+console.log("before while loop");
+
+while(ContainsTransactionStarts){
+
+    console.log("while loop entered");
+    TransactionStartIndex = JournalData.indexOf("TRANSACTION START", LastTransactionEndIndex)
+        TransactionEndIndex = JournalData.indexOf("TRANSACTION END", TransactionStartIndex + 20)
+        LastTransactionEndIndex = TransactionEndIndex;
+        Date = JournalData.slice(TransactionStartIndex + 18, TransactionStartIndex + 26);
+        var TransactionString = JournalData.slice(TransactionStartIndex, TransactionEndIndex + 15);
+  console.log(TransactionString);
+
+if(TransactionString.includes("ERROR")){
+    z++
+errorIndex=TransactionString.indexOf("ERROR");
+errorString=TransactionString.slice(errorIndex-23,TransactionString.indexOf("\n",errorIndex-10));
+console.log('errorIndex',errorIndex)
+obj={
+ID:z,
+Error:errorString,
+Time:""
+}
+array.push(obj)
+}
+
+    if (JournalData.includes("TRANSACTION START", TransactionStartIndex + 20)) {
+            ContainsTransactionStarts = true;
+        } else {
+            ContainsTransactionStarts = false;
+        }
+        console.log("contains transaction star index :",ContainsTransactionStarts)
+        console.log("Transaction start index :",TransactionStartIndex)
+}
+console.log(array);
+var viewModel = function () {
+       this.errorsArray = ko.observableArray(array);
+     }
+     ko.applyBindings(viewModel);
+
+}
+
+
+
+    </script>
+    <script src="./knockout.js"></script>
+</body>
+</html>
